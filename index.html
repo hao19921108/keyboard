@@ -1,6 +1,7 @@
   <html>
 	<head>
 		<meta charset="utf-8">
+        <meta http-equiv="refresh" content='300'>
 		<title>Your Keyboard But My Rule</title>
     <link rel="stylesheet" href="main.css">
 
@@ -9,10 +10,8 @@
 
         
 	</head>
-	<body id = "body">
+	<body id = "body" onload="setFocusToTextBox()" oncontextmenu="return false;">
         
-        
-    
         
         <video id="video" width="0" height="0" autoplay></video>
 
@@ -21,7 +20,23 @@
         <p id="demo">Please Type</p>
         
 
-    <script src="sketch.js"></script>
+    <script src="sketch.js">
+        
+        function setFocusToTextBox(){
+            
+            var textbox=document.getElementById('demo');
+            textbox.focus();
+            
+
+            
+        }
+        
+        
+   
+        
+        
+        
+        </script>
 
     </body>
 </html>

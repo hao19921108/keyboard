@@ -73,7 +73,6 @@ function turnOnMicrophone(){
 }  
     
     
-    
 }
 
 
@@ -139,15 +138,15 @@ const api_url='https://api.ipify.org/?format=json';
 var yourIpAddress = null;
 
 var sentence_2='Your Ip Address: '+ yourIpAddress +' is Mine.'
-var sentence_3='Your Camera will be mine.*';
+var sentence_3='Your Camera will be mine.';
 var sentence_4='Ummmmmmmmmm...You Look Cute.Body is Yours but imagery is Mine.';
 var sentence_5='Cursor will be Mine.+';
 var sentence_6="Oooooo. It disappeared.No worries.";
-var sentence_7="Your Voice is Mine.-";
+var sentence_7="Your Voice is Mine.";
 var sentence_8="All Mine.";
 var sentence_9="Endless Typing but nothing on the screen is yours.";
 var sentence_10="Mine.Mine.Mine.";
-var sentence_11="My, oh my!";
+var sentence_11="I'm everywhere just like the air. I'm something beyond your reach.";
 var sentence_12="Not delusional.";
 var sentence_13="All I want is you.";
 
