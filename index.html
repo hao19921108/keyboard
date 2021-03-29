@@ -1,43 +1,693 @@
   <html>
 	<head>
 		<meta charset="utf-8">
-        <meta http-equiv="refresh" content='300'>
-		<title>Your Keyboard But My Rule</title>
+		<title>Cloud Service</title>
     <link rel="stylesheet" href="main.css">
 
       
         <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/2.1.2/TweenMax.min.js"></script>
+        <script src="https://code.createjs.com/1.0.0/tweenjs.min.js"></script>
 
-        
 	</head>
-	<body id = "body" onload="setFocusToTextBox()" oncontextmenu="return false;">
+	<body>
+         
         
         
-        <video id="video" width="0" height="0" autoplay></video>
+        
+            <canvas id="c"></canvas>
+      <div class="row">
+  <div id = "leftbox">Mouse Movement: 0 Pixels</div>
+  <div id = "middlebox">Hit the Keys: 0</div>
+  <div id = "rightbox">Clicks: 0</div>
+</div>
+        
+        
+        
+        
+        <div id="container">
+        
+        <div id="userinformation">"I Need Your Data"</div>
+        </div>
+        
+        <div id="instruction"> Please Move Your Cursor. Press the Key. Click.</div>
+        
+        
+        
 
-        
-        <div class="instruction"> <h1></h1></div>
-        <p id="demo">Please Type</p>
-        
+            <script type="module">
+   import * as THREE from 'https://threejsfundamentals.org/threejs/resources/threejs/r114/build/three.module.js';
+      
+import {EffectComposer} from 'https://threejsfundamentals.org/threejs/resources/threejs/r114/examples/jsm/postprocessing/EffectComposer.js';
+import {RenderPass} from 'https://threejsfundamentals.org/threejs/resources/threejs/r114/examples/jsm/postprocessing/RenderPass.js';
+			import { UnrealBloomPass } from 'https://threejsfundamentals.org/threejs/resources/threejs/r114/examples/jsm/postprocessing/UnrealBloomPass.js';
+	
 
-    <script src="sketch.js">
+
+ 
+                           
+         var userinformation = document.getElementById('userinformation'); 
+         var leftbox = document.getElementById('leftbox'); 
+         var middlebox = document.getElementById('middlebox'); 
+         var rightbox = document.getElementById('rightbox'); 
+
+                
+                
+                
+                let scene, camera,angularSpeed,typeSpeed,clickSpeed,backgroundChangeFlag=0,threeSecondFlag=0, cloud,cloudArray=[];
+                let mouseMovement=0, clickes=0, clickAmount=0, typeAmount=0, cloudAmount=100;
+                let cloudPosition=[],posX,posY,posZ, timer =0;
+                let distance =0; // distance between each cloud to cloud center
+//                 clock = new THREE.Clock();
+
+                    
+                 let cloudCenter = new THREE.Vector3( 0, 440 , -250);
+                
+        var moveDirection = new THREE.Vector3();
+        var groupCenter = new THREE.Vector3(0,0,0);
+        var groupX,groupY,groupZ;
+        groupX =groupY = groupZ =0;
+
+                    
+                     const canvas = document.querySelector('#c');
+                
+                   clickSpeed=0.001; angularSpeed=0.00001; typeSpeed = 0.0001;
+                
+                    
+                    scene = new THREE.Scene();
+                    camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight,1,1000);
+                
+			camera.position.z = 5;
+                    camera.rotation.set(1.16,-0.12,0.27);
+
+                    let ambient = new THREE.AmbientLight(0x555555);
+                    scene.add(ambient);
+                    
+                let directionalLight = new THREE.DirectionalLight(0xff8c19);
+                directionalLight.position.set(0,0,1);
+                scene.add(directionalLight);
+                
+                
+                let orangeLight = new THREE.PointLight(0xcc6600,50,450,1.7);
+                orangeLight.position.set(200,300,100);
+                scene.add(orangeLight);
+                
+                 let redLight = new THREE.PointLight(0xd8547e,50,450,1.7);
+                redLight.position.set(100,300,100);
+               scene.add(redLight);
+                
+                
+                
+                
+                
+                
+                
+                
+                    const geometry = new THREE.PlaneGeometry( window.innerWidth, window.innerHeight, 32 );
+const material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+const plane = new THREE.Mesh( geometry, material );
+            plane.rotation.set(1.16,-0.12,0.27);
+plane.position.set(0,500,-190);
+                plane.visible = false;
+                
+scene.add( plane );
+                
+                
+                
+                
+                
+                
+                
+                
+          
+                
+                
+                       var renderer = new THREE.WebGLRenderer({ canvas:canvas, antialias: true,alpha:true});
+       //         renderer.setSize(window.innerWidth,window.innerHeight);
+
+                    scene.fog= new THREE.FogExp2(0xcecece, 0.0025);
+                
+                scene.background=new THREE.Color(0xcecece);  
+           //      renderer.domElement.style.background='0xcecece';
+
+                
+                //    renderer.setClearColor(scene.fog.color);
+                    
+                        document.body.appendChild(renderer.domElement);
+
+                    
+        let loader = new THREE.TextureLoader();
+        loader.load("smoke.png",function(texture){
+         let  cloudGeo = new THREE.PlaneBufferGeometry(500,500);
+        let    cloudMaterial = new THREE.MeshLambertMaterial({
+                map:texture,
+                transparent:true
+            });
+            
+           for(let p=0; p< cloudAmount ; p++){
+               
+                 cloud = new THREE.Mesh(cloudGeo,cloudMaterial);
+                posX=Math.random()*1000-500; // -500 ~ 500 mid 0
+                 posY= Math.random()*100+390; // 390 ~ 490 mid 440
+
+                 posZ=Math.random()*500-500; // -500 ~ 0   min -250
+
+               cloudPosition.push(posX);
+                cloudPosition.push(posY);
+
+                 cloudPosition.push(posZ);
+               
+               
+               
+               
+               
+               
+               cloud.position.set(posX, posY,posZ);
+                cloud.rotation.x = 1.36;
+                cloud.rotation.y = -0.15;
+                cloud.rotation.z = Math.random()*2*Math.PI;
+                cloud.material.opacity = 0.55;
+               
+               cloudArray.push(cloud); 
+               scene.add(cloud);
+                
+               
+           }
+               
+            
+        });
+                
+                
+                
+                
+                
+                
+                
+                    let previousX,previousY, substract,verticalSubstract, mouseamount;
+                
+        var direction=[0,0,0,0]; // left, right, top, bottom
+   
+                previousX=0;
+                previousY=0;
+                
+            canvas.addEventListener('mouseover', ev=> mouse_position(ev));
+                
+                function mouse_position(e){
+                    
+                    previousX  = e.x;
+                    previousY = e.y;  
+                    
+                    
+                    
+                       mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            
+                  raycaster.setFromCamera( mouse, camera );
+
+	// calculate objects intersecting the picking ray
+	const intersects = raycaster.intersectObject( plane );
+            let vvvv= new THREE.Vector3(mouse.x,mouse.y)
+	if(intersects[ 0 ]){console.log(intersects[0].point); cloudCenter = intersects[0].point; }
+
+                    
+                    
+                    
+                    
+                }
+                                    
+                                    
+                                    
+                                    
+                                 
+    
+                
+                
+                
+        let currenttext='';
+let sum='';
+
+                
+                
+           
+                
+                
+                
+                
+                
+                
+function setupKeyControls() {
+    document.onkeydown = function(e) {
+        if(e.key){
+            currenttext='Pressed '+ e.key + '<br/>';
+        };
+        sum+=e.key;
+          document.getElementById("userinformation").innerHTML=currenttext;
+         document.getElementById("userinformation").style.color='black';
+
+    middlebox.innerHTML= "Hit the Keys: " + sum.length;
         
-        function setFocusToTextBox(){
+        typeAmount +=1.3;
+      };
+    
+   
+    
+                
+    }
+
+setupKeyControls();
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                   function resizeRendererToDisplaySize(renderer) {
+     const canvas = renderer.domElement;
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  var canvasPixelWidth = canvas.width / window.devicePixelRatio;
+  var canvasPixelHeight = canvas.height / window.devicePixelRatio;
+
+  const needResize = canvasPixelWidth !== width || canvasPixelHeight !== height;
+  if (needResize) {
+    
+    renderer.setSize(width, height, false);
+  }
+  return needResize;
+                       
+  }
+     
+        
+     
+                mouseamount=0;
+                
+                
+                
+         
             
-            var textbox=document.getElementById('demo');
-            textbox.focus();
+
+                
+                var timeout;
+
+           
+                const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+        function onMouseMove(e){
             
+            
+            clearTimeout(timeout);
+  timeout = setTimeout(function(){  if(!backgroundChangeFlag){userinformation.innerHTML= "\"I'm Craving for Your Data. Move Your Mouse. Clicks. Hit the Keys.\"" }}, 2500);
+
+            
+    
+      
+
+	
+           
+            
+            
+            
+            
+            substract = previousX - e.x;
+            verticalSubstract = previousY - e.y;
+            
+            mouseamount+=Math.abs(substract);
+            mouseamount+=Math.abs(verticalSubstract);
+            
+          
+                
+            
+              
+            
+            
+        //  console.log(mouseamount);
+    //        if( substract >0 && direction[0]==0){  direction[0]=1;direction[1]=0; userinformation.innerHTML+= "<br />Mouse moved to the left"+substract +'px'; }
+    //        if( substract <0 && direction[1]==0){   direction[0]=0;direction[1]=1;userinformation.innerHTML+= "<br />Your moused moved to the right"+substract+'px'; }
+            
+                if( substract >3 ){ 
+                    mouseMovement+= substract;
+                    userinformation.innerHTML= "Mouse moved left "+substract +' Pixels'; 
+                }
+            if( substract <-3){ 
+                 mouseMovement+= (-1* substract);
+                userinformation.innerHTML = "Mouse moved right "+-1*substract+' Pixels'; 
+
+                         //        cloudArray.forEach(p=>{p.rotation.z +=(-0.01*(substract))});
+
+            }
+            
+            if(verticalSubstract>3){
+                     mouseMovement+= verticalSubstract;
+
+                  userinformation.innerHTML = "Mouse moved up "+verticalSubstract +' Pixels'; 
+                
+            }
+            if(verticalSubstract<-3){
+                                 mouseMovement+= (-1* verticalSubstract);
+
+                      userinformation.innerHTML = "Mouse moved down "+-1*verticalSubstract +' Pixels'; 
+                
+            }
+            
+            
+        //    console.log(e.x,e.y);
+            
+            
+              previousX = e.x;
+            previousY = e.y;
+            
+                 leftbox.innerHTML="Mouse Movement: "+ mouseMovement + " Pixels";
+
 
             
         }
-        
-        
-   
+              
+            
+            
+            
+
+  
+            
+               
+     window.addEventListener('mousemove', ev => {
+         
+         onMouseMove(ev);
+         
+         
+         
+               mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            
+                  raycaster.setFromCamera( mouse, camera );
+
+	// calculate objects intersecting the picking ray
+	const intersects = raycaster.intersectObject( plane );
+            let vvvv= new THREE.Vector3(mouse.x,mouse.y)
+	if(intersects[ 0 ]){console.log(intersects[0].point); cloudCenter = intersects[0].point; }
+         
+         
+         
+         
+     })
+      window.addEventListener('click', ev => {
+         
+          clickes++;
+          
+         rightbox.innerHTML="Clicks: "+ clickes;
+          
+         userinformation.innerHTML = "Mouse Clicked on: ( " + ev.x +' px, '+ev.y+'px )'; 
+
+          clickAmount+=2;
+          
+          
+                  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            
+                  raycaster.setFromCamera( mouse, camera );
+
+	// calculate objects intersecting the picking ray
+	const intersects = raycaster.intersectObject( plane );
+            let vvvv= new THREE.Vector3(mouse.x,mouse.y)
+	if(intersects[ 0 ]){console.log(intersects[0].point); cloudCenter = intersects[0].point; }
+
+         
+     })
+     
+     
+     
+
+                
+     let fogamount=0;
+                
+                let p=0.2;
+                
+                
+                    
+        var initial= new THREE.Color(0xcecece);
+                        var initial2= new THREE.Color(0xcecece);
+
+                  var value = new THREE.Color(0xd507fa);
+          var value1 = new THREE.Color(0x22eae8);
+                        var value2 = new THREE.Color(0xfaf707);
+
+                          var value3 = new THREE.Color(0x07fa8a);
+
+                   
+                         var myTween=    TweenLite.to(initial, 15, {
+    r: value.r,
+    g: value.g,
+    b: value.b,
+    
+    onUpdate: function () {
+      scene.background = (initial);
+    }
+                 
+, paused:true
+  });
+                            
+    var currentColor = scene.background;
+
+                function colorchange(currentColor, targetColor){
+            
+            var currentc = new THREE.Color(currentColor.clone());
+                    
+                    
+        myTween=  TweenLite.to(currentc, 15, {
+    r: targetColor.r,
+    g: targetColor.g,
+    b: targetColor.b,
+    
+    onUpdate: function () {
+      scene.background = (currentc);
+    }
+                 
+, paused:true
+  });            
+                    
+                    
+                    
+                }
+                
+                
+                
+                
+                
+function backgroundchange(){
+
+    switch(Math.floor(Math.random() * 4)){
+           
+        case 0:
+           if(scene.background!= value) {scene.background= value;}
+           break;
+           
+            case 1:
+           if(scene.background!= value1) {scene.background= value1;}
+
+           break;
+            case 2:
+           if(scene.background!= value2) {scene.background= value2;}
+
+           break;
+            case 3:
+           if(scene.background!= value3) {scene.background= value3;}
+           break;
+           
+           
+           }
+
+       
+               
+
+
+
+
+
+}
+                
+            
+                
+                
+                
+                function render(){
+                    
+                  //  timer+=0.05;
+                    
+                    
+                    
+                
+                    
+                if(clickAmount>0){clickAmount-=0.1;}
+                if(typeAmount>0.3){typeAmount-=0.2; typeSpeed=0.0001;}
+                if(typeAmount>50){typeSpeed +=0.000001;} 
+                    
+                    
+                    
+                    
+                    
+                    
+                   //             document.getElementById("userdata").scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+
+                    
+                    
+            //      console.log(scene.children.length);  
+                    
+        if ( mouseamount > 2.55){        mouseamount -= 2.5; }              
+
+                     if (mouseamount > 1000){ 
+                         
+                         
+                   //      myTween.play();
+                         mouseamount -= 20; 
+                     
+                     
+                     }
+                    if(mouseamount < 1000 && mouseamount>100){ //myTween.pause();
+                                          
+                         mouseamount -= 20;                       
+                        
+                     }
+                    
+                    
+                    
+                    if(mouseamount>3500){
+                         
+                         
+                         angularSpeed=0.0001;
+                         backgroundchange();
+                        
+     //                   
+                        
+                        
+                       for( var i =0; i< cloudAmount;i++){
+                               
+                if(cloudArray[i]){
+                                    
+                 var  x= cloudPosition[3*i+0]  ;  
+                 var   y= cloudPosition[3*i+1]  ;
+                 var   z =cloudPosition[3*i+2]  ; 
+                    
+                   let currentPosition = new THREE.Vector3(x,y,z);
+                    
+                    
+                    groupX +=x;
+                    groupY +=y;
+                    groupZ +=z;
+                    
+                            
+                   distance = currentPosition.distanceTo(cloudCenter);
+
+                    var radius = currentPosition.distanceTo(groupCenter);
+
+                    moveDirection.subVectors( cloudCenter, currentPosition);
+                    moveDirection.normalize();
+                    
+                        
+                 if(distance>280){   moveDirection.setLength(0.5);       }
+      
+                
+
+                    currentPosition.add(moveDirection);
+                    
+                    cloudPosition[3*i+0]= currentPosition.x;
+                     cloudPosition[3*i+1]= currentPosition.y;
+                     cloudPosition[3*i+2]= currentPosition.z;
+
+                    
+                     cloudArray[i].position.set(currentPosition.x,currentPosition.y,currentPosition.z);
+                                
+                }
+                
+                
+            } 
+                        
+                   groupCenter.set( groupX/cloudAmount, groupY/cloudAmount, groupZ/cloudAmount);     
+                        
+                        
+                         
+     //                    
+                     }else{
+                       scene.background=initial;
+
+                     }
+                    
+                    
+                    if(mouseamount<500){
+                        threeSecondFlag=0;
+                    }
+                    
+                    if(mouseamount<3500 && mouseamount> 1000){
+                        
+                        angularSpeed=0.00001;                        
+                        mouseamount -= 50; 
+
+                    }
+                    
+                    
+                    if (mouseamount > 5000){ mouseamount -= 100; threeSecondFlag=1;}
+                    if ( mouseamount > 10000){        mouseamount -= 250; }  
+                    
+                    if(threeSecondFlag){angularSpeed = 0.0001; backgroundchange();}
+                    
+                   // p+=0.02;
+                
+          
+
+         //     console.log(scene.background.color) ;   
+                    
+                    
+            
+                    
+
+                    
+                    
+    cloudArray.forEach(p=>{ ; p.rotation.z +=(0.0003+ typeSpeed*typeAmount + clickSpeed*clickAmount +angularSpeed*mouseamount*Math.random(0.01,3));});
+                           
+             //     console.log(mouseamount);
+                    
+                    fogamount = 0.0025-mouseamount*0.0000005 ;
+                    if(scene.fog.density>0.0018){scene.fog.density = fogamount ;    }
+                    else{ scene.fog.density=0.0018};
+                
+                    
+
+    requestAnimationFrame(render);     
+                       renderer.render(scene, camera);
+                    
+                    
+                   
+  if (resizeRendererToDisplaySize(renderer)) {
+    const canvas = renderer.domElement;
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    camera.updateProjectionMatrix();
+  }   
+                    
+                
+                    
+                    
+                }
+                
+               render();
+
+                
+             
+                
+                 
+                
+                
+
+                
+                
+          
         
         
         
         </script>
-
+        
     </body>
 </html>
 
