@@ -1,7 +1,7 @@
 
 var api_key="df6a37a03c06acca6b91311ff2d4ea45";
 var units = "&units=metric";
-var coord_API_endpoint = "http://api.openweathermap.org/data/2.5/weather?"
+// var coord_API_endpoint = "http://api.openweathermap.org/data/2.5/weather?"
 
 var join_key = "&appid=" +api_key;
 
@@ -225,7 +225,6 @@ window.addEventListener('load',()=>{
     
     if(navigator.geolocation){
         
-        
         navigator.geolocation.getCurrentPosition(position=>{
             
             long = position.coords.longitude;
@@ -238,6 +237,7 @@ window.addEventListener('load',()=>{
             
            var lat_long = "lat=" + lat + "&lon=" + long;
 
+            /*
            var current_coord_weather_url= coord_API_endpoint + lat_long + join_key + units;
             
             fetch(current_coord_weather_url).then(data=>{return data.json();}).then(data=>{
@@ -248,7 +248,7 @@ window.addEventListener('load',()=>{
                 description=data.weather[0].description;
                 
                 console.log(city);console.log(temp);console.log(description);});
-            
+            */
             
             
     });
@@ -315,7 +315,6 @@ function setupKeyControls() {
             if(j==paragraph.length){ j=0;i=0;}
                 
             }
-
         };
         document.getElementById("demo").innerHTML=currenttext;
          document.getElementById("demo").style.color='black';
