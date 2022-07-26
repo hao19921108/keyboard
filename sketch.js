@@ -217,7 +217,7 @@ let paragrpah_Array=[paragraph1,paragraph2,paragraph3,paragraph4,paragraph5];
 window.addEventListener('load',()=>{
     
     
-    paragraph=paragrpah_Array[Math.floor(Math.random() * 5)] ;
+    paragraph=paragrpah_Array[Math.floor(Math.random() * paragrpah_Array.length)] ;
 
     
     let long;
