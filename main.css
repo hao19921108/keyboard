@@ -8,6 +8,26 @@
     
 }
 
+#beian{
+    font-size: 10px;
+    color: grey;
+    text-align: center;
+    position: fixed;
+    width: 320px;
+    bottom: 15px;
+    left: 38%;
+
+}
+
+#beian #number{
+    position: absolute;
+   
+
+}
+
+#beian a{
+    color: darkgrey;
+}
 
 body{
     
